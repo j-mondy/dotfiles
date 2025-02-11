@@ -20,3 +20,8 @@ git clone --bare git@github.com:mondyjosh/dotfiles.git $HOME/.dotfiles
 dotfiles config --local status.showUntrackedFiles no
 dotfiles checkout
 ```
+
+## TODOs
+- [ ] Add Ansible as submodule
+- [ ] Add Neovim as submodule
+- [ ] Identify other submodules
