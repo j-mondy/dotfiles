@@ -8,4 +8,4 @@ bindkey -s ^f "tmux-sessionizer\n"
 # Set aliases
 alias vim="nvim"
 alias fd="fdfind"
-alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
