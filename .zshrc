@@ -11,6 +11,10 @@ plugins=(
     zsh-syntax-highlighting
 )
 
+# Case-insensitive completion
+autoload -U compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
 # Adjust agents that keychain manages
 zstyle :omz:plugins:keychain agents gpg,ssh
 

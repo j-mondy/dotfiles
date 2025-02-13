@@ -348,7 +348,7 @@ format = '\[[$time]($style)\]'
 
 [username]
 disabled = false
-format = '[$user]($style) @'
+format = '[$user]($style)@'
 show_always = true
 
 [vagrant]
