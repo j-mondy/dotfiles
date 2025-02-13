@@ -1,9 +1,6 @@
 # Path to your oh-my-zsh installation
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load
-ZSH_THEME="spaceship"
-
 # Load plugins - Add wisely, as too many plugins slow down shell startup
 plugins=(
     git
@@ -23,3 +20,5 @@ source $ZSH/oh-my-zsh.sh
 # Source zsh profile
 source ~/.zsh_profile
 
+# Set theme to starship
+eval "$(starship init zsh)"
