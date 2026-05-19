@@ -24,5 +24,9 @@ source $ZSH/oh-my-zsh.sh
 # Source zsh profile
 source ~/.zsh_profile
 
+# Add Homebrew
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
 # Set theme to starship
 eval "$(starship init zsh)"
+
