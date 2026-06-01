@@ -1,7 +1,7 @@
 [user]
-  	name = "Josh Mondy"
-    username = mondyjosh
-    email = 55757183+mondyjosh@users.noreply.github.com
+  	name = "J Mondy"
+    username = j-mondy
+    email = 555757183+j-mondy@users.noreply.github.com
 
 [color]
     ui = auto
@@ -11,6 +11,11 @@
 
 [core]
 	editor = nvim
+
+[merge]
+  tool = meld
+[mergetool "meld"]
+  cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
 
 # Enforce SSH
 [url "ssh://git@github.com/"]
