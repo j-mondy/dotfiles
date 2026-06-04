@@ -18,6 +18,9 @@ if command -v keychain >/dev/null; then
   eval "$(keychain --eval --quiet --agents gpg,ssh)"
 fi
 
+# Trust .NET Developer Certificate
+export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:/etc/pki/tls/certs"
+
 # nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
