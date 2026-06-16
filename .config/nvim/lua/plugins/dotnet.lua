@@ -13,13 +13,13 @@
 -- The DAP / TEST / BUILD-RUN / PACKAGES / SCAFFOLD layers all live inside the single
 -- easy-dotnet plugin spec below; they're tagged inline within its `opts` and `keys`.
 --
--- This config assumes the LazyVim `lang.dotnet` extra is DISABLED:
---   1. Remove "lazyvim.plugins.extras.lang.dotnet" from lazyvim.json (or :LazyExtras)
---   2. :Lazy sync   -> omnisharp-extended-lsp.nvim and neotest-vstest drop out of the lock file
---   3. Keep the `dap.core` extra (or mfussenegger/nvim-dap) enabled -- easy-dotnet's
---      auto_register_dap hooks into nvim-dap; the dotnet extra is no longer providing it.
---   4. For easy-dotnet's server-backed features (test discovery, outdated, EF):
---        dotnet tool install -g EasyDotnet
+-- Dependencies:
+--   - CLI - easy-dotnet -> dotnet tool install -g EasyDotnet
+--   - CLI - dotnet ef -> dotnet tool install -g dotnet-ef
+--   - LazyExtras - dap.core -> easy-dotnet's auto_register_dap hooks into nvim-dap
+--
+-- Additional notes:
+--   - This config assumes the LazyVim `lang.dotnet` extra is DISABLED
 
 return {
   -----------------------------------------------------------------------------
