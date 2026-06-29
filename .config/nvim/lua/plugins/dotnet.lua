@@ -182,8 +182,7 @@ return {
       { "<leader>cDn", "<cmd>Dotnet new<cr>", desc = "dotnet new", ft = { "cs", "fsharp" } },
       { "<leader>cDs", "<cmd>Dotnet secrets<cr>", desc = "dotnet secrets", ft = { "cs", "fsharp" } },
       { "<leader>cDe", "<cmd>Dotnet ef database update<cr>", desc = "dotnet ef database update", ft = { "cs" } },
-      -- migrations add takes a name arg, so leave the cmdline open (no <cr>) to type it:
-      { "<leader>cDm", "<cmd>Dotnet ef migrations add", desc = "dotnet ef add database migration", ft = { "cs" } },
+      { "<leader>cDm", "<cmd>Dotnet ef migrations add<cr>", desc = "dotnet ef add database migration", ft = { "cs" } },
     },
   },
 
@@ -194,17 +193,17 @@ return {
   -- list WITHOUT clobbering LazyVim's existing sources (lsp/path/snippet/buffer).
   {
     "saghen/blink.cmp",
-    opts = {
-      sources = {
-        providers = {
-          easy_dotnet = {
-            name = "easy-dotnet",
-            module = "easy-dotnet.completion.blink",
-            score_offset = 10000,
-          },
-        },
-        default = { "easy_dotnet" },
-      },
-    },
+    opts = function(_, opts)
+      opts.sources = opts.sources or {}
+      opts.sources.providers = opts.sources.providers or {}
+      opts.sources.providers.easy_dotnet = {
+
+        name = "easy-dotnet",
+        module = "easy-dotnet.completion.blink",
+        score_offset = 10000,
+      }
+      opts.sources.default = opts.sources.default or {}
+      table.insert(opts.sources.default, "easy_dotnet")
+    end,
   },
 }
