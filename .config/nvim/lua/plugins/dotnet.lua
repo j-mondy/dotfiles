@@ -102,7 +102,7 @@ return {
   },
 
   -----------------------------------------------------------------------------
-  -- [EDITOR] formatting -- Roslyn LSP via conform (csharpier dropped)
+  -- [EDITOR] formatting -- Roslyn LSP via conform
   -----------------------------------------------------------------------------
   -- No external C# formatter: conform falls back to the Roslyn LSP formatter,
   -- which also honours organize-imports through the LSP's format/code-action path.
@@ -110,13 +110,14 @@ return {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
-        cs = {}, -- [EDITOR] empty -> conform uses lsp_format fallback (Roslyn)
+        -- [EDITOR] empty -> conform uses lsp_format fallback (Roslyn)
+        cs = {},
       },
     },
   },
 
   -----------------------------------------------------------------------------
-  -- [SYNTAX] treesitter -- c_sharp parser (was supplied by the disabled extra)
+  -- [SYNTAX] treesitter -- c_sharp parser
   -----------------------------------------------------------------------------
   {
     "nvim-treesitter/nvim-treesitter",
@@ -125,6 +126,7 @@ return {
       vim.list_extend(opts.ensure_installed, { "c_sharp" })
     end,
   },
+
   -----------------------------------------------------------------------------
   -- easy-dotnet.nvim -- owns [DAP] [TEST] [BUILD/RUN] [PACKAGES] [SCAFFOLD]
   -----------------------------------------------------------------------------
@@ -154,46 +156,42 @@ return {
     -- interface) rather than the `:Dotnet` command wrapper. Layer ownership for each
     -- group is tagged inline below.
     keys = {
-      { "<leader>cd", "", desc = "+dotnet", ft = { "cs", "fsharp", "razor" } },
+      { "<leader>cD", "", desc = "+dotnet", ft = { "cs", "fsharp", "razor" } },
 
       -- [BUILD/RUN]
-      { "<leader>cdr", "<cmd>Dotnet run<cr>", desc = "dotnet run", ft = { "cs", "fsharp" } },
-      { "<leader>cdR", "<cmd>Dotnet run profile<cr>", desc = "dotnet run (profile)", ft = { "cs", "fsharp" } },
-      { "<leader>cdb", "<cmd>Dotnet build<cr>", desc = "dotnet build", ft = { "cs", "fsharp" } },
-      { "<leader>cdw", "<cmd>Dotnet watch<cr>", desc = "dotnet watch", ft = { "cs", "fsharp" } },
-      { "<leader>cdC", "<cmd>Dotnet clean<cr>", desc = "dotnet clean", ft = { "cs", "fsharp" } },
-      { "<leader>cdo", "<cmd>Dotnet restore<cr>", desc = "dotnet restore", ft = { "cs", "fsharp" } },
+      { "<leader>cDr", "<cmd>Dotnet run<cr>", desc = "dotnet run", ft = { "cs", "fsharp" } },
+      { "<leader>cDR", "<cmd>Dotnet run profile<cr>", desc = "dotnet run (profile)", ft = { "cs", "fsharp" } },
+      { "<leader>cDb", "<cmd>Dotnet build quickfix<cr>", desc = "dotnet build", ft = { "cs", "fsharp" } },
+      { "<leader>cDw", "<cmd>Dotnet watch<cr>", desc = "dotnet watch", ft = { "cs", "fsharp" } },
+      { "<leader>cDC", "<cmd>Dotnet clean<cr>", desc = "dotnet clean", ft = { "cs", "fsharp" } },
+      { "<leader>cDo", "<cmd>Dotnet restore<cr>", desc = "dotnet restore", ft = { "cs", "fsharp" } },
 
       -- [DAP]
-      {
-        "<leader>cdd",
-        function()
-          require("dap").continue()
-        end,
-        desc = "Debug (continue)",
-        ft = { "cs", "fsharp" },
-      },
-      { "<leader>cdD", "<cmd>Dotnet debug profile<cr>", desc = "Debug (profile)", ft = { "cs", "fsharp" } },
+      { "<leader>cDd", "<cmd>Dotnet debug<cr>", desc = "dotnet debug", ft = { "cs", "fsharp" } },
+      { "<leader>cDD", "<cmd>Dotnet debug profile<cr>", desc = "dotnet debug (profile)", ft = { "cs", "fsharp" } },
+      { "<leader>cDA", "<cmd>Dotnet debug attach<cr>", desc = "dotnet debug (attach)", ft = { "cs", "fsharp" } },
 
       -- [TEST]
-      { "<leader>cdt", "<cmd>Dotnet testrunner<cr>", desc = "Test runner", ft = { "cs", "fsharp" } },
+      { "<leader>cDt", "<cmd>Dotnet testrunner<cr>", desc = "dotnet test (runner)", ft = { "cs", "fsharp" } },
 
       -- [PACKAGES]
-      { "<leader>cdp", "<cmd>Dotnet solution select<cr>", desc = "Project/solution view", ft = { "cs", "fsharp" } },
-      { "<leader>cda", "<cmd>Dotnet add package<cr>", desc = "Add NuGet package", ft = { "cs", "fsharp" } },
-      { "<leader>cdu", "<cmd>Dotnet outdated<cr>", desc = "Outdated packages", ft = { "cs", "fsharp" } },
+      { "<leader>cDa", "<cmd>Dotnet add package<cr>", desc = "dotnet add package", ft = { "cs", "fsharp" } },
+      { "<leader>cDu", "<cmd>Dotnet outdated<cr>", desc = "dotnet outdated", ft = { "cs", "fsharp" } },
 
       -- [SCAFFOLD]
-      { "<leader>cdn", "<cmd>Dotnet new<cr>", desc = "New from template", ft = { "cs", "fsharp" } },
-      { "<leader>cds", "<cmd>Dotnet secrets<cr>", desc = "User secrets", ft = { "cs", "fsharp" } },
-      { "<leader>cde", "<cmd>Dotnet ef database update<cr>", desc = "EF: database update", ft = { "cs" } },
-      { "<leader>cdm", "<cmd>Dotnet ef migrations add<cr>", desc = "EF: add migration", ft = { "cs" } },
+      { "<leader>cDn", "<cmd>Dotnet new<cr>", desc = "dotnet new", ft = { "cs", "fsharp" } },
+      { "<leader>cDs", "<cmd>Dotnet secrets<cr>", desc = "dotnet secrets", ft = { "cs", "fsharp" } },
+      { "<leader>cDe", "<cmd>Dotnet ef database update<cr>", desc = "dotnet ef database update", ft = { "cs" } },
+      -- migrations add takes a name arg, so leave the cmdline open (no <cr>) to type it:
+      { "<leader>cDm", "<cmd>Dotnet ef migrations add", desc = "dotnet ef add database migration", ft = { "cs" } },
     },
   },
 
   -------------------------------------------------------------------------------
   -- [PACKAGES] blink.cmp -- NuGet version autocomplete inside csproj/fsproj
   -----------------------------------------------------------------------------
+  -- Append form: registers the easy-dotnet source and adds it to the default
+  -- list WITHOUT clobbering LazyVim's existing sources (lsp/path/snippet/buffer).
   {
     "saghen/blink.cmp",
     opts = {
@@ -209,221 +207,4 @@ return {
       },
     },
   },
-  --
-  -- -- Disable omnisharp and register LSP code action keymaps
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   opts = {
-  --     servers = {
-  --       omnisharp = { enabled = false },
-  --     },
-  --   },
-  -- },
-  --
-  -- -- Disable csharpier; use Roslyn for formatting instead
-  -- {
-  --   "stevearc/conform.nvim",
-  --   opts = {
-  --     formatters_by_ft = {
-  --       cs = {},
-  --       razor = {},
-  --     },
-  --   },
-  -- },
-  --
-  -- -- Enable code lens for Roslyn buffers
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   opts = function()
-  --     vim.api.nvim_create_autocmd("LspAttach", {
-  --       group = vim.api.nvim_create_augroup("roslyn_codelens", { clear = true }),
-  --       callback = function(args)
-  --         local client = vim.lsp.get_client_by_id(args.data.client_id)
-  --         if not client or client.name ~= "roslyn" then
-  --           return
-  --         end
-  --         if not client:supports_method("textDocument/codeLens") then
-  --           return
-  --         end
-  --         vim.lsp.codelens.enable(true, { bufnr = args.buf })
-  --       end,
-  --     })
-  --   end,
-  -- },
-  --
-  -- -- Improved nvim-dap configuration for .NET
-  -- {
-  --   "mfussenegger/nvim-dap",
-  --   opts = function()
-  --     local dap = require("dap")
-  --
-  --     -- Helper: find the most recently built .dll under bin/Debug
-  --     local function find_dll()
-  --       local cwd = vim.fn.getcwd()
-  --       local dlls = vim.fn.glob(cwd .. "/**/bin/Debug/**/*.dll", false, true)
-  --       local candidates = vim.tbl_filter(function(p)
-  --         return not p:match("/ref/") and not p:match("%.deps%.dll$")
-  --       end, dlls)
-  --       if #candidates == 0 then
-  --         return vim.fn.input("Path to dll: ", cwd .. "/", "file")
-  --       end
-  --       if #candidates == 1 then
-  --         return candidates[1]
-  --       end
-  --       return vim.fn.input("Path to dll: ", cwd .. "/", "file")
-  --     end
-  --
-  --     for _, lang in ipairs({ "cs", "fsharp", "vb" }) do
-  --       dap.configurations[lang] = {
-  --         {
-  --           type = "netcoredbg",
-  --           name = "Launch (auto-discover dll)",
-  --           request = "launch",
-  --           program = find_dll,
-  --           cwd = "${workspaceFolder}",
-  --           stopAtEntry = false,
-  --         },
-  --         {
-  --           type = "netcoredbg",
-  --           name = "Launch with args",
-  --           request = "launch",
-  --           program = find_dll,
-  --           args = function()
-  --             local input = vim.fn.input("Args: ")
-  --             return vim.split(input, " ", { trimempty = true })
-  --           end,
-  --           cwd = "${workspaceFolder}",
-  --           stopAtEntry = false,
-  --         },
-  --         {
-  --           type = "netcoredbg",
-  --           name = "Attach to process",
-  --           request = "attach",
-  --           processId = require("dap.utils").pick_process,
-  --         },
-  --       }
-  --     end
-  --   end,
-  -- },
-  --
-  -- -- dotnet CLI keymaps
-  -- {
-  --   "folke/which-key.nvim",
-  --   opts = {
-  --     spec = {
-  --       { "<leader>cd", group = "dotnet CLI" },
-  --     },
-  --   },
-  --   keys = {
-  --     -- LSP code actions (Roslyn)
-  --     {
-  --       "<leader>ca",
-  --       function()
-  --         vim.lsp.buf.code_action()
-  --       end,
-  --       mode = { "n", "v" },
-  --       desc = "Code Action",
-  --       ft = { "cs", "razor" },
-  --     },
-  --     {
-  --       "<leader>cA",
-  --       function()
-  --         vim.lsp.buf.code_action({
-  --           context = { only = { "source" }, diagnostics = {} },
-  --         })
-  --       end,
-  --       desc = "Source Action",
-  --       ft = { "cs", "razor" },
-  --     },
-  --     {
-  --       "<leader>co",
-  --       function()
-  --         vim.lsp.buf.code_action({
-  --           apply = true,
-  --           context = { only = { "source.organizeImports" }, diagnostics = {} },
-  --         })
-  --       end,
-  --       desc = "Organize Imports",
-  --       ft = { "cs", "razor" },
-  --     },
-  --     {
-  --       "<leader>cR",
-  --       function()
-  --         vim.lsp.buf.code_action({
-  --           context = { only = { "refactor" }, diagnostics = {} },
-  --         })
-  --       end,
-  --       desc = "Refactor",
-  --       ft = { "cs", "razor" },
-  --     },
-  --     {
-  --       "<leader>cq",
-  --       function()
-  --         vim.lsp.buf.code_action({
-  --           context = { only = { "quickfix" }, diagnostics = {} },
-  --         })
-  --       end,
-  --       desc = "Quick Fix",
-  --       ft = { "cs", "razor" },
-  --     },
-  --
-  --     -- dotnet CLI
-  --     {
-  --       "<leader>cdb",
-  --       function()
-  --         vim.cmd("make")
-  --       end,
-  --       desc = "Build (quickfix)",
-  --       ft = { "cs", "fsharp", "vb" },
-  --     },
-  --     {
-  --       "<leader>cdr",
-  --       function()
-  --         vim.cmd("split | terminal dotnet run")
-  --         vim.cmd("startinsert")
-  --       end,
-  --       desc = "Run",
-  --       ft = { "cs", "fsharp", "vb" },
-  --     },
-  --     {
-  --       "<leader>cdc",
-  --       function()
-  --         vim.cmd("!dotnet clean")
-  --       end,
-  --       desc = "Clean",
-  --       ft = { "cs", "fsharp", "vb" },
-  --     },
-  --     {
-  --       "<leader>cdR",
-  --       function()
-  --         vim.cmd("!dotnet restore")
-  --       end,
-  --       desc = "Restore",
-  --       ft = { "cs", "fsharp", "vb" },
-  --     },
-  --     {
-  --       "<leader>cdt",
-  --       function()
-  --         vim.cmd("split | terminal dotnet test")
-  --         vim.cmd("startinsert")
-  --       end,
-  --       desc = "Test (terminal)",
-  --       ft = { "cs", "fsharp", "vb" },
-  --     },
-  --
-  --     -- Roslyn plugin commands
-  --     {
-  --       "<leader>cdT",
-  --       "<cmd>Roslyn target<cr>",
-  --       desc = "Select Solution Target",
-  --       ft = { "cs", "razor" },
-  --     },
-  --     {
-  --       "<leader>cds",
-  --       "<cmd>Roslyn restart<cr>",
-  --       desc = "Restart Roslyn Server",
-  --       ft = { "cs", "razor" },
-  --     },
-  --   },
-  -- },
 }
