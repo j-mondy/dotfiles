@@ -1,8 +1,3 @@
--- Dependencies:
---   - jq -> brew install jq
---   - prettier -> npm install -g prettier
---   - tidy -> brew install tidy-html5
-
 return {
   {
     "jellydn/hurl.nvim",

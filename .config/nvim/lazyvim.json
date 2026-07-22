@@ -3,6 +3,7 @@
     "lazyvim.plugins.extras.ai.claudecode",
     "lazyvim.plugins.extras.dap.core",
     "lazyvim.plugins.extras.dap.nlua",
+    "lazyvim.plugins.extras.editor.neo-tree",
     "lazyvim.plugins.extras.formatting.prettier",
     "lazyvim.plugins.extras.lang.ansible",
     "lazyvim.plugins.extras.lang.docker",
@@ -18,7 +19,6 @@
     "lazyvim.plugins.extras.test.core",
     "lazyvim.plugins.extras.util.dot",
     "lazyvim.plugins.extras.util.gh",
-    "lazyvim.plugins.extras.util.gitui",
     "lazyvim.plugins.extras.util.octo"
   ],
   "install_version": 8,

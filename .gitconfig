@@ -33,3 +33,7 @@
 
 [pull]
 	rebase = false
+[diff]
+	tool = meld
+[difftool "meld"]
+	cmd = meld \"$LOCAL\" \"$REMOTE\"
