@@ -1,203 +1,218 @@
 return {
-  "GustavEikaas/easy-dotnet.nvim",
-  -- 'nvim-telescope/telescope.nvim' or 'ibhagwan/fzf-lua' or 'folke/snacks.nvim'
-  -- are highly recommended for a better experience
-  dependencies = { "nvim-lua/plenary.nvim", "mfussenegger/nvim-dap", "folke/snacks.nvim" },
-  config = function()
-    local dotnet = require("easy-dotnet")
-    dotnet.setup({
-      managed_terminal = {
-        auto_hide = true, -- auto hides terminal if exit code is 0
-        auto_hide_delay = 1000, -- delay before auto hiding, 0 = instant
-        mappings = {
-          next_tab = { lhs = "<Tab>", desc = "Next terminal tab" },
-          prev_tab = { lhs = "<S-Tab>", desc = "Previous terminal tab" },
-          new_terminal = { lhs = "+", desc = "New user terminal" },
-          close_terminal = { lhs = "X", desc = "Close current terminal tab" },
-          hide_panel = { lhs = "q", desc = "Hide terminal panel" },
-        },
-      },
-      -- Optional configuration for external terminals (matches nvim-dap structure)
-      external_terminal = nil,
-      projx_lsp = {
-        enabled = true,
-      },
-      lsp = {
-        enabled = true, -- Enable builtin roslyn lsp
-        set_fold_expr = false,
-        preload_roslyn = true, -- Start loading roslyn before any buffer is opened
-        roslynator_enabled = true, -- Automatically enable roslynator analyzer
-        easy_dotnet_analyzer_enabled = true, -- Enable roslyn analyzer from easy-dotnet-server
-        easy_dotnet_extension_enabled = false, -- Needs to be true for enhanced_rename and create_type_from_usage
-        enhanced_rename = false, -- auto rename file when renaming class
-        create_type_from_usage = false, -- code action for creating class from unresolved symbol in a separate file
-        restart_roslyn_on_branch_change = false, -- Restart Roslyn when Git HEAD changes
-        auto_refresh_codelens = true,
-        suggest_updates = true, -- Periodically suggest roslyn-language-server updates
-        analyzer_assemblies = {}, -- Any additional roslyn analyzers you might use like SonarAnalyzer.CSharp
-        razor = {
-          enabled = true,
-          html = {
-            enabled = true,
-            cmd = nil, -- Auto-detect project node_modules/.bin/vscode-html-language-server, then PATH
-            request_timeout = 5000,
+  {
+    "GustavEikaas/easy-dotnet.nvim",
+    -- 'nvim-telescope/telescope.nvim' or 'ibhagwan/fzf-lua' or 'folke/snacks.nvim'
+    -- are highly recommended for a better experience
+    dependencies = { "nvim-lua/plenary.nvim", "mfussenegger/nvim-dap", "folke/snacks.nvim" },
+    lazy = false,
+    -- stylua: ignore
+    keys = {
+      -- [BUILD/RUN]
+      { "<leader>cDb", "<cmd>Dotnet build solution quickfix<cr>", desc = "dotnet build sln", ft = { "cs", "csproj", "sln", "slnx" } },
+      { "<leader>cDr", "<cmd>Dotnet run<cr>", desc = "dotnet run", ft = { "cs" } },
+      { "<leader>cDR", "<cmd>Dotnet run profile<cr>", desc = "dotnet run (profile)", ft = { "cs" } },
+      { "<leader>cDw", "<cmd>Dotnet watch<cr>", desc = "dotnet watch", ft = { "cs" } },
+      { "<leader>cDC", "<cmd>Dotnet clean<cr>", desc = "dotnet clean", ft = { "cs" } },
+      { "<leader>cDo", "<cmd>Dotnet restore<cr>", desc = "dotnet restore", ft = { "cs" } },
+
+      -- [DAP]
+      { "<leader>cDd", "<cmd>Dotnet debug<cr>", desc = "dotnet debug", ft = { "cs" } },
+      { "<leader>cDD", "<cmd>Dotnet debug profile<cr>", desc = "dotnet debug (profile)", ft = { "cs" } },
+      { "<leader>cDA", "<cmd>Dotnet debug attach<cr>", desc = "dotnet debug (attach)", ft = { "cs" } },
+
+      -- [TEST]
+      { "<leader>cDt", "<cmd>Dotnet testrunner<cr>", desc = "dotnet test (runner)", ft = { "cs" } },
+
+      -- [PACKAGES]
+      { "<leader>cDa", "<cmd>Dotnet add package<cr>", desc = "dotnet add package", ft = { "cs" } },
+      { "<leader>cDu", "<cmd>Dotnet outdated<cr>", desc = "dotnet outdated", ft = { "cs" } },
+
+      -- [SCAFFOLD]
+      { "<leader>cDn", "<cmd>Dotnet new<cr>", desc = "dotnet new", ft = { "cs" } },
+      { "<leader>cDs", "<cmd>Dotnet secrets<cr>", desc = "dotnet secrets", ft = { "cs" } },
+      { "<leader>cDe", "<cmd>Dotnet ef database update<cr>", desc = "dotnet ef database update", ft = { "cs" } },
+      { "<leader>cDm", "<cmd>Dotnet ef migrations add<cr>", desc = "dotnet ef add database migration", ft = { "cs" } },
+    },
+    config = function()
+      local dotnet = require("easy-dotnet")
+      dotnet.setup({
+        managed_terminal = {
+          auto_hide = true, -- auto hides terminal if exit code is 0
+          auto_hide_delay = 1000, -- delay before auto hiding, 0 = instant
+          mappings = {
+            next_tab = { lhs = "<Tab>", desc = "Next terminal tab" },
+            prev_tab = { lhs = "<S-Tab>", desc = "Previous terminal tab" },
+            new_terminal = { lhs = "+", desc = "New user terminal" },
+            close_terminal = { lhs = "X", desc = "Close current terminal tab" },
+            hide_panel = { lhs = "q", desc = "Hide terminal panel" },
           },
         },
-        config = {},
-      },
-      debugger = {
-        -- Path to custom coreclr DAP adapter
-        -- When set, this fully overrides `engine`; easy-dotnet-server uses this binary as-is.
-        -- When nil, easy-dotnet-server falls back to its own bundled debugger selected by `engine`.
-        bin_path = nil,
-        -- Which bundled debugger to use when `bin_path` is nil.
-        --   "netcoredbg" (default) — Samsung netcoredbg
-        --   "dncdbg"               — viewizard/dncdbg (a fork of netcoredbg with a richer set of features)
-        --   "sharpdbg"             — MattParkerDev/sharpdbg (a new debugger written in C#)
-        engine = "netcoredbg",
-        console = "integratedTerminal", -- Controls where the target app runs: "integratedTerminal" (Neovim buffer) or "externalTerminal" (OS window)
-        apply_value_converters = true,
-        auto_register_dap = true,
-        mappings = {
-          open_variable_viewer = { lhs = "T", desc = "open variable viewer" },
+        -- Optional configuration for external terminals (matches nvim-dap structure)
+        external_terminal = nil,
+        projx_lsp = {
+          enabled = true,
         },
-      },
-      ---@type TestRunnerOptions
-      test_runner = {
-        auto_start_testrunner = true,
-        hide_legend = false,
-        -- Set to true when using neotest to avoid duplicate signs and conflicting buffer keymaps.
-        neotest_integration = false,
-        ---@type "split" | "vsplit" | "float" | "buf"
-        viewmode = "float",
-        ---@type number|nil
-        vsplit_width = nil,
-        ---@type string|nil "topleft" | "topright"
-        vsplit_pos = nil,
-        icons = {
-          passed = "",
-          skipped = "",
-          failed = "",
-          success = "",
-          reload = "",
-          test = "",
-          sln = "󰘐",
-          project = "󰘐",
-          dir = "",
-          package = "",
-          class = "",
-          build_failed = "󰒡",
+        lsp = {
+          enabled = true, -- Enable builtin roslyn lsp
+          set_fold_expr = false,
+          preload_roslyn = true, -- Start loading roslyn before any buffer is opened
+          roslynator_enabled = true, -- Automatically enable roslynator analyzer
+          easy_dotnet_analyzer_enabled = true, -- Enable roslyn analyzer from easy-dotnet-server
+          easy_dotnet_extension_enabled = false, -- Needs to be true for enhanced_rename and create_type_from_usage
+          enhanced_rename = false, -- auto rename file when renaming class
+          create_type_from_usage = false, -- code action for creating class from unresolved symbol in a separate file
+          restart_roslyn_on_branch_change = false, -- Restart Roslyn when Git HEAD changes
+          auto_refresh_codelens = true,
+          suggest_updates = true, -- Periodically suggest roslyn-language-server updates
+          analyzer_assemblies = {}, -- Any additional roslyn analyzers you might use like SonarAnalyzer.CSharp
+          razor = {
+            enabled = true,
+            html = {
+              enabled = true,
+              cmd = nil, -- Auto-detect project node_modules/.bin/vscode-html-language-server, then PATH
+              request_timeout = 5000,
+            },
+          },
+          config = {},
         },
-        mappings = {
-          run_test_from_buffer = { lhs = "<leader>r", desc = "run test from buffer" },
-          run_all_tests_from_buffer = { lhs = "<leader>t", desc = "Run all tests in file" },
-          get_build_errors = { lhs = "<leader>e", desc = "get build errors" },
-          peek_stack_trace_from_buffer = { lhs = "<leader>p", desc = "peek stack trace from buffer" },
-          debug_test_from_buffer = { lhs = "<leader>d", desc = "run test from buffer" },
-          debug_test = { lhs = "<leader>d", desc = "debug test" },
-          go_to_file = { lhs = "<leader>g", desc = "go to file" },
-          run_all = { lhs = "<leader>R", desc = "run all tests" },
-          run = { lhs = "<leader>r", desc = "run test" },
-          peek_stacktrace = { lhs = "<leader>p", desc = "peek stacktrace of failed test" },
-          expand = { lhs = "o", desc = "expand" },
-          expand_node = { lhs = "E", desc = "expand node" },
-          collapse_all = { lhs = "W", desc = "collapse all" },
-          close = { lhs = "q", desc = "close testrunner" },
-          refresh_testrunner = { lhs = "<C-r>", desc = "refresh testrunner" },
-          cancel = { lhs = "<C-c>", desc = "cancel in-flight operation" },
-          next_failure = { lhs = "]f", desc = "jump to next failing test" },
-          prev_failure = { lhs = "[f", desc = "jump to previous failing test" },
+        debugger = {
+          -- Path to custom coreclr DAP adapter
+          -- When set, this fully overrides `engine`; easy-dotnet-server uses this binary as-is.
+          -- When nil, easy-dotnet-server falls back to its own bundled debugger selected by `engine`.
+          bin_path = nil,
+          -- Which bundled debugger to use when `bin_path` is nil.
+          --   "netcoredbg" (default) — Samsung netcoredbg
+          --   "dncdbg"               — viewizard/dncdbg (a fork of netcoredbg with a richer set of features)
+          --   "sharpdbg"             — MattParkerDev/sharpdbg (a new debugger written in C#)
+          engine = "netcoredbg",
+          console = "integratedTerminal", -- Controls where the target app runs: "integratedTerminal" (Neovim buffer) or "externalTerminal" (OS window)
+          apply_value_converters = true,
+          auto_register_dap = true,
+          mappings = {
+            open_variable_viewer = { lhs = "T", desc = "open variable viewer" },
+          },
         },
-      },
-      new = {
-        project = {
-          prefix = "sln", -- "sln" | "none"
+        test_runner = {
+          auto_start_testrunner = true,
+          hide_legend = false,
+          -- Set to true when using neotest to avoid duplicate signs and conflicting buffer keymaps.
+          neotest_integration = true,
+          ---@type "split" | "vsplit" | "float" | "buf"
+          viewmode = "float",
+          ---@type number|nil
+          vsplit_width = nil,
+          ---@type string|nil "topleft" | "topright"
+          vsplit_pos = nil,
+          icons = {
+            passed = "",
+            skipped = "",
+            failed = "",
+            success = "",
+            reload = "",
+            test = "",
+            sln = "󰘐",
+            project = "󰘐",
+            dir = "",
+            package = "",
+            class = "",
+            build_failed = "󰒡",
+          },
+          mappings = {
+            run_test_from_buffer = { lhs = "<leader>r", desc = "run test from buffer" },
+            run_all_tests_from_buffer = { lhs = "<leader>t", desc = "Run all tests in file" },
+            get_build_errors = { lhs = "<leader>e", desc = "get build errors" },
+            peek_stack_trace_from_buffer = { lhs = "<leader>p", desc = "peek stack trace from buffer" },
+            debug_test_from_buffer = { lhs = "<leader>d", desc = "run test from buffer" },
+            debug_test = { lhs = "<leader>d", desc = "debug test" },
+            go_to_file = { lhs = "<leader>g", desc = "go to file" },
+            run_all = { lhs = "<leader>R", desc = "run all tests" },
+            run = { lhs = "<leader>r", desc = "run test" },
+            peek_stacktrace = { lhs = "<leader>p", desc = "peek stacktrace of failed test" },
+            expand = { lhs = "o", desc = "expand" },
+            expand_node = { lhs = "E", desc = "expand node" },
+            collapse_all = { lhs = "W", desc = "collapse all" },
+            close = { lhs = "q", desc = "close testrunner" },
+            refresh_testrunner = { lhs = "<C-r>", desc = "refresh testrunner" },
+            cancel = { lhs = "<C-c>", desc = "cancel in-flight operation" },
+            next_failure = { lhs = "]f", desc = "jump to next failing test" },
+            prev_failure = { lhs = "[f", desc = "jump to previous failing test" },
+          },
         },
-      },
-      csproj_mappings = true,
-      fsproj_mappings = true,
-      auto_bootstrap_namespace = {
-        --block_scoped, file_scoped
-        type = "block_scoped",
-        enabled = true,
-        use_clipboard_json = {
-          behavior = "prompt", --'auto' | 'prompt' | 'never',
-          register = "+", -- which register to check
+        new = {
+          project = {
+            prefix = "sln", -- "sln" | "none"
+          },
         },
-      },
-      server = {
-        use_visual_studio = false, -- Set true for .NET Framework support on Windows
-        ---@type nil | "Off" | "Critical" | "Error" | "Warning" | "Information" | "Verbose" | "All"
-        log_level = nil,
-      },
-      -- choose which picker to use with the plugin
-      -- possible values are "telescope" | "fzf" | "snacks" | "basic"
-      -- if no picker is specified, the plugin will determine
-      -- the available one automatically with this priority:
-      --  snacks -> fzf -> telescope ->  basic
-      picker = "snacks",
-      notifications = {
-        --Set this to false if you have configured lualine to avoid double logging
-        handler = function(start_event)
-          local spinner = require("easy-dotnet.ui-modules.spinner").new()
-          spinner:start_spinner(function()
-            return start_event.job.name
-          end)
-          ---@param finished_event JobEvent
-          return function(finished_event)
-            spinner:stop_spinner(finished_event.result.msg, finished_event.result.level)
-          end
-        end,
-      },
-      diagnostics = {
-        default_severity = "error",
-        setqflist = false,
-      },
-      outdated = {
-        mappings = {
-          upgrade = { lhs = "<leader>pu", desc = "upgrade package under cursor" },
-          upgrade_all = { lhs = "<leader>pa", desc = "upgrade all outdated packages" },
+        csproj_mappings = true,
+        fsproj_mappings = true,
+        auto_bootstrap_namespace = {
+          --block_scoped, file_scoped
+          type = "block_scoped",
+          enabled = true,
+          use_clipboard_json = {
+            behavior = "prompt", --'auto' | 'prompt' | 'never',
+            register = "+", -- which register to check
+          },
         },
+        server = {
+          use_visual_studio = false, -- Set true for .NET Framework support on Windows
+          ---@type nil | "Off" | "Critical" | "Error" | "Warning" | "Information" | "Verbose" | "All"
+          log_level = nil,
+        },
+        -- choose which picker to use with the plugin
+        -- possible values are "telescope" | "fzf" | "snacks" | "basic"
+        -- if no picker is specified, the plugin will determine
+        -- the available one automatically with this priority:
+        --  snacks -> fzf -> telescope ->  basic
+        picker = "snacks",
+        notifications = {
+          --Set this to false if you have configured lualine to avoid double logging
+          handler = function(start_event)
+            local spinner = require("easy-dotnet.ui-modules.spinner").new()
+            spinner:start_spinner(function()
+              return start_event.job.name
+            end)
+            return function(finished_event)
+              spinner:stop_spinner(finished_event.result.msg, finished_event.result.level)
+            end
+          end,
+        },
+        diagnostics = {
+          default_severity = "error",
+          setqflist = false,
+        },
+        outdated = {
+          mappings = {
+            upgrade = { lhs = "<leader>pu", desc = "upgrade package under cursor" },
+            upgrade_all = { lhs = "<leader>pa", desc = "upgrade all outdated packages" },
+          },
+        },
+      })
+    end,
+  },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "GustavEikaas/easy-dotnet.nvim",
+    },
+    config = function()
+      require("neotest").setup({
+        adapters = {
+          require("easy-dotnet.neotest"),
+        },
+      })
+    end,
+  },
+  {
+    "folke/which-key.nvim",
+    opts = {
+      spec = {
+        { "<leader>cD", group = "dotnet", icon = "󰘐" },
       },
-    })
-
-    -- Example command
-    -- vim.api.nvim_create_user_command("Secrets", function()
-    --   dotnet.secrets()
-    -- end, {})
-
-    -- Example keybinding
-    -- vim.keymap.set("n", "<C-p>", function()
-    --   vim.cmd("Dotnet run profile default")
-    -- end)
-    -- keys = {
-    --   { "<leader>cD", "", desc = "+dotnet", ft = { "cs", "fsharp", "razor" } },
-
-    --   -- [BUILD/RUN]
-    --   { "<leader>cDb", "<cmd>Dotnet build quickfix<cr>", desc = "dotnet build", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDr", "<cmd>Dotnet run<cr>", desc = "dotnet run", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDR", "<cmd>Dotnet run profile<cr>", desc = "dotnet run (profile)", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDw", "<cmd>Dotnet watch<cr>", desc = "dotnet watch", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDC", "<cmd>Dotnet clean<cr>", desc = "dotnet clean", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDo", "<cmd>Dotnet restore<cr>", desc = "dotnet restore", ft = { "cs", "fsharp" } },
-
-    --   -- [DAP]
-    --   { "<leader>cDd", "<cmd>Dotnet debug<cr>", desc = "dotnet debug", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDD", "<cmd>Dotnet debug profile<cr>", desc = "dotnet debug (profile)", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDA", "<cmd>Dotnet debug attach<cr>", desc = "dotnet debug (attach)", ft = { "cs", "fsharp" } },
-
-    --   -- [TEST]
-    --   { "<leader>cDt", "<cmd>Dotnet testrunner<cr>", desc = "dotnet test (runner)", ft = { "cs", "fsharp" } },
-
-    --   -- [PACKAGES]
-    --   { "<leader>cDa", "<cmd>Dotnet add package<cr>", desc = "dotnet add package", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDu", "<cmd>Dotnet outdated<cr>", desc = "dotnet outdated", ft = { "cs", "fsharp" } },
-
-    --   -- [SCAFFOLD]
-    --   { "<leader>cDn", "<cmd>Dotnet new<cr>", desc = "dotnet new", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDs", "<cmd>Dotnet secrets<cr>", desc = "dotnet secrets", ft = { "cs", "fsharp" } },
-    --   { "<leader>cDe", "<cmd>Dotnet ef database update<cr>", desc = "dotnet ef database update", ft = { "cs" } },
-    --   { "<leader>cDm", "<cmd>Dotnet ef migrations add<cr>", desc = "dotnet ef add database migration", ft = { "cs" } },
-    -- },
-  end,
+    },
+  },
 }
