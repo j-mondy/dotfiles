@@ -32,6 +32,14 @@ source ~/.zsh_profile
 # Set prompt theme to starship
 eval "$(starship init zsh)"
 
+# Bind keys the emacs keymap leaves undefined (Fedora's /etc/zshrc omits these)
+bindkey "${terminfo[kdch1]}" delete-char        # Delete
+bindkey "${terminfo[khome]}" beginning-of-line  # Home
+bindkey "${terminfo[kend]}"  end-of-line        # End
+bindkey "^[[3;5~"            kill-word          # Ctrl+Delete
+bindkey "^[[1;5C"            forward-word       # Ctrl+Right
+bindkey "^[[1;5D"            backward-word      # Ctrl+Left
+
 # Source plugins (syntax-highlighting MUST be sourced last)
 source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
