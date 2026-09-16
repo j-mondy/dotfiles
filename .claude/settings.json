@@ -1,0 +1,38 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud.mjs"
+  },
+  "enabledPlugins": {
+    "azure@claude-plugins-official": true,
+    "microsoft-docs@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "oh-my-claudecode@omc": true
+  },
+  "extraKnownMarketplaces": {
+    "omc": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+      }
+    }
+  },
+  "theme": "auto",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -Rs --arg n SessionStart \"{systemMessage: \\\"Focus mode active — lead with the next action, numbered steps, one concrete next step.\\\", hookSpecificOutput: {hookEventName: \\$n, additionalContext: (\\\"Focus mode is ON for this session. Apply these output rules to every response until the user says \\\\\\\"stop focus mode\\\\\\\" or \\\\\\\"normal mode\\\\\\\".\\n\\n\\\" + .)}}\" \"$HOME/.claude/skills/focus-output/SKILL.md\" 2>/dev/null || true",
+            "timeout": 10,
+            "statusMessage": "Loading focus output rules"
+          }
+        ]
+      }
+    ]
+  }
+}
