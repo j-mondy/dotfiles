@@ -1,1 +1,10 @@
 .dotfiles
+
+# Claude Code: ignore machine state, caches, and project memory.
+# Track config only. Add new files explicitly with a matching negation.
+.claude/*
+!.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/focus-output/
