@@ -1,4 +1,4 @@
-# Josh's Dotfiles
+# j-mondy's Dotfiles
 
 Pardon the dust while this gets set up.
 
